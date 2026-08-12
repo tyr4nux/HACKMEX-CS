@@ -2,7 +2,7 @@
 
 ## Conceptos
 
-Internet Protocol (**IP**): identifica un dispositivo.
+**Internet Protocol (IP)**: identifica un dispositivo.
 
 **Puertos**: identifica un servicio/app corriendo en un dispositivo.
 
@@ -26,7 +26,7 @@ Conexión VPN:
 sudo openvpn config.ovpn
 ```
 
-Obtener IP:
+Obtener IP local:
 
 ```bash
 ip a show tun0
@@ -48,7 +48,7 @@ Identificar OS (Linux TTL=64, Windows TTL=128):
 ping -c 1 10.10.10.10
 ```
 
-Descubre puertos (80=http, 443=https):
+Descubrir puertos (80=http, 443=https):
 
 ```bash
 sudo nmap -sT -vvv -oN scan.txt -n -Pn -T4 -p- 10.10.10.10
@@ -60,13 +60,21 @@ sudo nmap -sT -vvv -oN scan.txt -n -Pn -T4 -p1-1024 10.10.10.10
 
 ### Web
 
-Descubrir directorios:
+Descubrir tecnologías:
 
 ```bash
-gobuster dir -t 64 -u 'http://www.example.com' -w /usr/share/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-medium.txt
+whatweb http://www.example.com
 ```
 
-Diccionario para archivos: `/usr/share/seclists/Discovery/Web-Content/raft-large-files.txt`
+Descubrir contenido:
+
+```bash
+gobuster dir -t 64 -u 'http://www.example.com' -w /usr/share/seclists/Discovery/Web-Content/common.txt
+```
+
+Diccionario de directorios: `/usr/share/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-medium.txt`
+
+Diccionario de archivos: `/usr/share/seclists/Discovery/Web-Content/raft-large-files.txt`
 
 ### Vulnerabilidades
 
@@ -74,6 +82,8 @@ SQLi:
 
 ```text
 /search?id=5'
+/search?id=5' or 1=1-- -
+/search?id=5' or sleep(5)-- -
 ```
 
 IDOR:
@@ -83,7 +93,7 @@ IDOR:
 /account?id=2
 ```
 
-[Command](https://www.revshells.com) injection:
+[Command injection](https://www.revshells.com):
 
 ```text
 command1 $(command2)

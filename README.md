@@ -91,6 +91,7 @@ IDOR:
 ```text
 /account?id=1
 /account?id=2
+/account?id=3
 ```
 
 [Command injection](https://www.revshells.com):
@@ -105,7 +106,9 @@ command1 && command2
 LFI:
 
 ```text
+/?page=/etc/passwd
 /?page=../../../etc/passwd
+/?page=../../../../../../etc/passwd
 ```
 
 File upload:
@@ -121,4 +124,3 @@ Check `sudo` permissions:
 ```bash
 sudo -l
 ```
-

